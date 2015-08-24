@@ -1,25 +1,21 @@
-var PostcssCompiler = require('broccoli-postcss');
+var postcss = require('broccoli-postcss');
+var Funnel = require('broccoli-funnel');
 var checker = require('ember-cli-version-checker');
 
 // PostCSSPlugin constructor
 function PostCSSPlugin (options) {
   this.name = 'ember-cli-postcss';
   this.options = options;
-  this.plugins = options.plugins;
-  this.map = options.map;
 }
 
-PostCSSPlugin.prototype.toTree = function (tree, inputPath, outputPath) {
-  var trees = [tree];
-
-  if (this.options.includePaths) {
-    trees = trees.concat(this.options.includePaths);
-  }
-
-  inputPath += '/' + this.options.inputFile;
-  outputPath += '/' + this.options.outputFile;
-
-  return new PostcssCompiler(trees, inputPath, outputPath, this.plugins, this.map);
+PostCSSPlugin.prototype.toTree = function (tree, inputPath, outputPath, inputOptions) {
+  return new Funnel(postcss(tree, this.options), {
+    srcDir: inputPath,
+    destDir: '/',
+    getDestinationPath: function() {
+      return inputOptions.outputPaths.app;
+    }
+  });
 };
 
 module.exports = {
@@ -35,8 +31,6 @@ module.exports = {
     // Set defaults if none were passed
     options.map = options.map || {};
     options.plugins = options.plugins || [];
-    options.inputFile = options.inputFile || 'app.css';
-    options.outputFile = options.outputFile || this.project.name() + '.css';
 
     // Add to registry and pass options
     app.registry.add('css', new PostCSSPlugin(options));

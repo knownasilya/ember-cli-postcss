@@ -13,6 +13,7 @@
   "author": "Jeff Jewiss <jeffjewiss@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "broccoli-funnel": "^0.2.7",
     "broccoli-postcss": "^1.0.0",
     "ember-cli-version-checker": "^1.0.2"
   },
